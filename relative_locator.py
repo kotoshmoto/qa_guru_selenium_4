@@ -1,46 +1,44 @@
 import time
-from selenium import webdriver
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.relative_locator import locate_with
+from selenium.webdriver.support.relative_locator import locate_with, with_tag_name
 
-# Для работы относительных локаторов необходимо импортировать класс with_tag_name (или with_name / with_id) из модуля selenium.webdriver.support.relative_locator.
 
-# Инициализация драйвера (например, для Chrome)
-driver = webdriver.Chrome()
-driver.get("https://qa-guru.github.io/one-page-form/text-box.html")
-driver.maximize_window()
+# Для работы относительных локаторов необходимо импортировать класс with_tag_name (или with_name / with_id)
+# из модуля selenium.webdriver.support.relative_locator.
 
-time.sleep(3)
-# Находим label, затем поле ввода под ним
-# TODO: Fix me
-full_name_label = driver.find_element(By.XPATH, "//label[text()='Full Name']")
-email_input = driver.find_element(locate_with(By.TAG_NAME, "input").below(full_name_label))
-email_input.send_keys("Ivan Ivanov")
+def test_relative_locator(driver):
+    driver.get("https://qa-guru.github.io/one-page-form/text-box.html")
 
-time.sleep(3)
-# Находим поле Full Name и вводим email в поле НАД кнопкой Submit (или другим элементом)
-# TODO: Fix me
-submit_btn = driver.find_element(By.ID, "submit")
-full_name_input = driver.find_element(locate_with(By.TAG_NAME, "input").above(submit_btn))
-full_name_input.send_keys("ivan@example.com")
+    # below
+    text_box_label = driver.find_element(By.XPATH, "/html/body/main/section/h1")
+    full_name_label = driver.find_element(locate_with(By.TAG_NAME, "input").below(text_box_label))
+    full_name_label.clear()
+    full_name_label.send_keys("Ivan Ivanov")
 
-time.sleep(3)
-# Если радиокнопки или чекбоксы стоят в ряд, можно искать левый элемент
-# TODO: Fix me
-second_radio = driver.find_element(By.ID, "gender-radio-2")
-first_radio = driver.find_element(locate_with(By.TAG_NAME, "input").toLeftOf(second_radio))
-first_radio.click()
+    # above
+    curr_addr_locator = driver.find_element(By.ID, "currentAddress")
+    email_input = driver.find_element(locate_with(By.TAG_NAME, "input").above(curr_addr_locator))
+    email_input.clear()
+    email_input.send_keys("ivan@example.com")
 
-time.sleep(3)
-# Ищем элемент справа от первого найденного радиобатона
-# TODO: Fix me
-first_radio = driver.find_element(By.ID, "gender-radio-1")
-second_radio = driver.find_element(locate_with(By.TAG_NAME, "input").toRightOf(first_radio))
-second_radio.click()
+    # TODO: Fix me. Справа в форме Text Box нет элементов которые можно использовать
+    # second_radio = driver.find_element(By.ID, "gender-radio-2")
+    # first_radio = driver.find_element(locate_with(By.TAG_NAME, "input").to_left_of(second_radio))
+    # first_radio.click()
 
-time.sleep(3)
-# Поиск элемента, расположенного около определенного текста
-# TODO: Fix me
-label_element = driver.find_element(By.XPATH, "//label[text()='Current Address']")
-address_textarea = driver.find_element(locate_with(By.TAG_NAME, "textarea").near(label_element))
-address_textarea.send_keys("г. Минск, ул. Академическая")
+    # to_right_of
+    curr_addr_label = driver.find_element(By.XPATH, '//*[@id="userForm"]/div[3]/label')
+    curr_addr_input = driver.find_element(locate_with(By.TAG_NAME, "textarea").to_right_of(curr_addr_label))
+    curr_addr_input.clear()
+    curr_addr_input.send_keys("г. Минск, ул. Академическая")
+
+    perm_addr_label = driver.find_element(By.XPATH, '//*[@id="userForm"]/div[4]/label')
+    perm_addr_input = driver.find_element(locate_with(By.TAG_NAME, "textarea").to_right_of(perm_addr_label))
+    perm_addr_input.clear()
+    perm_addr_input.send_keys("г. Минск, ул. Академическая")
+
+    # near
+    label_element = driver.find_element(By.ID, "permanentAddress")
+    submit_button = driver.find_element(locate_with(By.TAG_NAME, "button").near(label_element))
+    submit_button.click()
