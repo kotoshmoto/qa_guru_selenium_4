@@ -1,11 +1,8 @@
 import time
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-# 1. Инициализация драйвера (открывается браузер Chrome)
-driver = webdriver.Chrome()
 
-try:
+def test_add_remove_elements(driver):
     # 2. Переход на целевую страницу
     url = "https://the-internet.herokuapp.com/add_remove_elements/"
     driver.get(url)
@@ -38,8 +35,3 @@ try:
     remaining_buttons = driver.find_elements(By.CLASS_NAME, "added-manually")
     print(f"Осталось кнопок на странице: {len(remaining_buttons)}")
     time.sleep(2)
-
-finally:
-    # 7. Закрытие браузера и завершение сессии
-    driver.quit()
-    print("Браузер закрыт. Тест завершен.")
